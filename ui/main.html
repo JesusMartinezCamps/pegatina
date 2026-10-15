@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pegatina</title>
+<link rel="stylesheet" href="styles.css">
+<script src="api.js"></script>
+<script src="common.js"></script>
+<script src="main.js" defer></script>
+</head>
+<body>
+<div class="app">
+
+  <nav id="nav-library" class="nav" aria-label="Navegación">
+    <button type="button" class="navbtn" data-view="recent" aria-current="true"><span class="ico" data-icon="clock"></span><span class="name">Recientes</span></button>
+    <button type="button" class="navbtn" data-view="favorites"><span class="ico" data-icon="star"></span><span class="name">Favoritos</span></button>
+    <div id="spaces-block" class="nav-group" hidden>
+      <div class="nav-sep" role="separator"></div>
+      <div class="nav-label" id="spaces-label">ESPACIOS</div>
+      <div id="spaces" class="nav-group" role="group" aria-labelledby="spaces-label"></div>
+    </div>
+    <div id="new-space" class="nav-group"></div>
+    <div class="nav-bottom">
+      <button type="button" class="navbtn" id="go-settings"><span class="ico" data-icon="gear"></span><span class="name">Configuración</span></button>
+    </div>
+  </nav>
+
+  <nav id="nav-settings" class="nav" aria-label="Secciones de configuración" hidden>
+    <button type="button" class="navbtn" data-section="general" aria-current="true"><span class="ico" data-icon="sliders"></span><span class="name">General</span></button>
+    <button type="button" class="navbtn" data-section="storage"><span class="ico" data-icon="folder"></span><span class="name">Almacenamiento</span></button>
+    <button type="button" class="navbtn" data-section="appearance"><span class="ico" data-icon="sun"></span><span class="name">Apariencia</span></button>
+    <div class="nav-bottom">
+      <button type="button" class="navbtn" id="go-library"><span class="ico" data-icon="grid"></span><span class="name">Biblioteca</span></button>
+    </div>
+  </nav>
+
+  <section id="view-library" class="library" aria-label="Biblioteca">
+    <section class="list-card" aria-label="Elementos">
+      <div class="list-head">
+        <label class="search">
+          <span class="ico" data-icon="search"></span>
+          <input id="q" type="text" placeholder="Buscar en Recientes" aria-label="Buscar en Recientes" autocomplete="off" spellcheck="false">
+        </label>
+      </div>
+      <div id="pills" class="pills" role="group" aria-label="Filtrar por tipo"></div>
+      <div class="hr"></div>
+      <ul id="list" class="items" role="list" aria-label="Elementos copiados"></ul>
+      <div id="empty" class="empty" hidden></div>
+    </section>
+    <section id="detail" class="detail" aria-label="Detalle"></section>
+  </section>
+
+  <main id="view-settings" class="settings" hidden>
+    <div class="settings-inner">
+      <h1 class="page-title">Configuración</h1>
+
+      <section id="sec-general" class="sec" aria-labelledby="h-general">
+        <h2 id="h-general">General</h2>
+        <div class="rows">
+          <div class="row">
+            <div class="row-text">
+              <div id="l-savepw">Guardar contraseñas copiadas</div>
+              <div class="row-desc">Se guardan cifradas y se muestran ocultas</div>
+            </div>
+            <div class="row-ctl">
+              <span id="st-savepw">Desactivado</span>
+              <button type="button" role="switch" class="switch" id="sw-savepw" aria-checked="false" aria-labelledby="l-savepw"></button>
+            </div>
+          </div>
+          <div class="row">
+            <div class="row-text">
+              <div id="l-autostart">Iniciar con Windows</div>
+              <div class="row-desc">Pegatina arranca al iniciar sesión y se queda en segundo plano.</div>
+            </div>
+            <div class="row-ctl">
+              <span id="st-autostart">Activado</span>
+              <button type="button" role="switch" class="switch" id="sw-autostart" aria-checked="true" aria-labelledby="l-autostart"></button>
+            </div>
+          </div>
+          <div class="row">
+            <div class="row-text">
+              <div>Atajo para abrir el panel</div>
+              <div class="row-desc">El panel rápido aparece junto al ratón.</div>
+            </div>
+            <div class="row-ctl">
+              <div id="keys" class="keys" aria-live="polite"></div>
+              <button type="button" class="btn" id="btn-hotkey">Cambiar</button>
+            </div>
+            <div id="hotkey-error" class="row-error" role="alert" hidden></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="sec-storage" class="sec" aria-labelledby="h-storage">
+        <h2 id="h-storage">Almacenamiento</h2>
+        <div class="rows">
+          <div class="row">
+            <div class="row-text">
+              <div>Carpeta de textos</div>
+              <div class="row-desc">Aquí se guardan los textos, los enlaces y la lista de todo lo copiado.</div>
+            </div>
+            <div class="row-ctl">
+              <span id="path-text" class="path selectable"></span>
+              <button type="button" class="btn" id="btn-text-dir">Cambiar</button>
+            </div>
+          </div>
+          <div class="row">
+            <div class="row-text">
+              <div>Carpeta de imágenes</div>
+              <div class="row-desc">Puede estar en otro disco.</div>
+            </div>
+            <div class="row-ctl">
+              <span id="path-media" class="path selectable"></span>
+              <button type="button" class="btn" id="btn-media-dir">Cambiar</button>
+            </div>
+          </div>
+          <div class="row">
+            <div class="row-text">
+              <label for="sel-history">Historial</label>
+              <div class="row-desc">Los favoritos y lo que está en espacios no caducan nunca.</div>
+            </div>
+            <div class="row-ctl">
+              <select id="sel-history" class="sel">
+                <option value="100">Últimos 100 elementos</option>
+                <option value="500">Últimos 500 elementos</option>
+                <option value="1000">Últimos 1000 elementos</option>
+                <option value="5000">Últimos 5000 elementos</option>
+              </select>
+            </div>
+          </div>
+          <div class="row">
+            <div class="row-text">
+              <div>Vaciar historial</div>
+              <div class="row-desc">No toca favoritos ni espacios</div>
+            </div>
+            <div class="row-ctl">
+              <button type="button" class="btn" id="btn-clear">Vaciar</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="sec-appearance" class="sec" aria-labelledby="h-appearance">
+        <h2 id="h-appearance">Apariencia</h2>
+        <div class="rows">
+          <div class="row">
+            <div class="row-text">
+              <div>Tema</div>
+              <div class="row-desc">Elige cómo se ve Pegatina.</div>
+            </div>
+            <div class="seg" id="seg-theme" role="group" aria-label="Tema">
+              <button type="button" data-choice="system" data-t="Sistema" aria-pressed="true">Sistema</button>
+              <button type="button" data-choice="light" data-t="Claro" aria-pressed="false">Claro</button>
+              <button type="button" data-choice="dark" data-t="Oscuro" aria-pressed="false">Oscuro</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+</div>
+</body>
+</html>

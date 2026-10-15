@@ -1,0 +1,69 @@
+name: build
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 45
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: 1.99.0
+
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Tests del núcleo
+        run: cargo test -p pegatina-core
+
+      - name: Compilar la app y el instalador
+        working-directory: app
+        run: npx --yes @tauri-apps/cli@2.12.1 build
+
+      - name: Autocomprobación del portapapeles
+        shell: pwsh
+        timeout-minutes: 5
+        run: |
+          $report = Join-Path $env:RUNNER_TEMP 'selftest.txt'
+          $exe = Join-Path $PWD 'target\release\pegatina.exe'
+          $run = Start-Process -FilePath $exe -ArgumentList '--selftest', $report -Wait -PassThru
+          if (Test-Path $report) { Get-Content $report } else { Write-Host 'La autocomprobación no escribió informe.' }
+          if ($run.ExitCode -ne 0) {
+            Write-Host "La autocomprobación terminó con código $($run.ExitCode)."
+            exit 1
+          }
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pegatina-instalador
+          path: target/release/bundle/nsis/*-setup.exe
+          if-no-files-found: error
+
+      - name: Publicar la release
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $installer = Get-ChildItem 'target\release\bundle\nsis\*-setup.exe' | Select-Object -First 1
+          $notes = @'
+          Instalador de Pegatina para Windows 11.
+
+          1. Descarga el archivo `Pegatina_..._x64-setup.exe` de abajo y ábrelo.
+          2. No pide permisos de administrador: se instala solo para tu usuario.
+          3. Si Windows muestra «Windows protegió su PC» (el instalador aún no está firmado), pulsa «Más información» y después «Ejecutar de todas formas».
+
+          Pegatina guarda todo lo que copias en tu propio equipo y no envía nada a internet. Se abre con Ctrl+Alt+Espacio.
+          '@
+          gh release create $env:GITHUB_REF_NAME $installer.FullName --title "Pegatina $env:GITHUB_REF_NAME" --notes $notes

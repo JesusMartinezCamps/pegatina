@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pegatina</title>
+<link rel="stylesheet" href="styles.css">
+<script src="api.js"></script>
+<script src="common.js"></script>
+<script src="panel.js" defer></script>
+</head>
+<body class="panel-page">
+<div class="panel">
+  <div class="p-search">
+    <label class="search search--accent">
+      <span class="ico" data-icon="search"></span>
+      <input id="q" type="text" placeholder="Buscar en lo copiado" aria-label="Buscar en lo copiado" autocomplete="off" spellcheck="false">
+    </label>
+  </div>
+
+  <div class="p-bar">
+    <div class="seg" role="group" aria-label="Vista">
+      <button type="button" id="tab-recent" data-tab="recent" data-t="Recientes" aria-pressed="true">Recientes</button>
+      <button type="button" id="tab-favorites" data-tab="favorites" data-t="Favoritos" aria-pressed="false">Favoritos</button>
+    </div>
+    <button type="button" id="space-btn" class="select-btn" aria-haspopup="menu" aria-label="Filtrar por espacio: Todos los espacios" hidden>
+      <span id="space-dot" class="dot" hidden></span>
+      <span id="space-label">Todos los espacios</span>
+      <span class="ico" data-icon="chevron"></span>
+    </button>
+  </div>
+
+  <div class="p-list">
+    <ul id="list" class="items" role="list" aria-label="Elementos copiados"></ul>
+    <div id="empty" class="empty" hidden></div>
+  </div>
+
+  <div class="p-foot">
+    <span class="hint">Enter pega · Ctrl+C copia · Supr borra</span>
+    <div class="foot-btns">
+      <button type="button" id="btn-library" class="icon-btn" aria-label="Abrir biblioteca" title="Biblioteca"><span class="ico" data-icon="grid"></span></button>
+      <button type="button" id="btn-settings" class="icon-btn" aria-label="Configuración" title="Configuración"><span class="ico" data-icon="gear"></span></button>
+    </div>
+  </div>
+</div>
+</body>
+</html>
