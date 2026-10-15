@@ -24,9 +24,14 @@ Funciona en Windows 11, no necesita internet y nada de lo que copias sale de tu 
 
 ### Contraseñas
 
-Por defecto, Pegatina **no guarda** lo que copias desde un gestor de contraseñas.
-Si quieres que sí lo haga, activa **«Guardar contraseñas copiadas»**: es la primera opción de Configuración y también está en el menú del icono de Pegatina junto al reloj.
+Pegatina no lee ni adivina qué es una contraseña: lo sabe porque el programa de origen (un gestor de contraseñas o el navegador al pulsar «copiar contraseña») avisa a Windows de que lo copiado es secreto. Esas copias, por defecto, **no se guardan**.
+Si quieres que sí se guarden, activa **«Guardar contraseñas de navegadores y gestores»**: es la primera opción de Configuración y también está en el menú del icono de Pegatina junto al reloj.
 Se guardan cifradas con tu usuario de Windows y se ven ocultas (••••••••); con el icono del ojo las puedes mostrar.
+
+Dos límites que conviene saber:
+
+- **Una contraseña copiada a mano** (de una nota, un documento, un chat o un correo) nadie la marca, así que Pegatina la guarda como texto normal y legible. Si pasa, bórrala del historial con **Supr**.
+- **Lo que copias en una ventana de incógnito o privada** también llega marcado como secreto, y Pegatina lo trata igual que una contraseña: con la opción apagada no se guarda, y con ella encendida se guarda cifrado.
 
 ## Dónde se guardan tus datos
 
